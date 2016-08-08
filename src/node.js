@@ -4,13 +4,12 @@ export default class Node {
    * @constructor
    * @param  {*}       key
    * @param  {*}       data
-   * @param  {Boolean} color
    * @param  {Node}    left
    * @param  {Node}    right
    * @param  {Node}    parent
    * @param  {Number}  height
    */
-  constructor(key, data, color, left, right, parent, height) {
+  constructor(key, data, left, right, parent, height) {
     this.key    = key;
     this.data   = data;
     this.left   = left;

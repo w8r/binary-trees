@@ -1,2 +1,2 @@
-import RBTree from './tree';
-export default RBTree;
+export AVL from './tree';
+export BST from './bst';

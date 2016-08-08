@@ -20,6 +20,7 @@
     "compile": "babel --stage 0 -d lib/ src/",
     "build": "npm run clean && babel --optional runtime -d build src",
     "test": "babel-node node_modules/.bin/blue-tape test/*.test.js | tspec",
+    "test:watch": "nodemon --exec 'npm run test'",
     "cover": "npm run compile && babel-node node_modules/.bin/babel-istanbul cover node_modules/.bin/blue-tape ./lib/*.js --report text-summary",
     "report": "npm run compile && babel-node node_modules/.bin/babel-istanbul cover node_modules/.bin/blue-tape ./lib/*.js --report html && open ./coverage/index.html",
     "coveralls": "npm run compile && babel-node node_modules/.bin/babel-istanbul cover node_modules/.bin/blue-tape ./lib/*.js --report lcovonly && cat ./coverage/lcov.info | coveralls",

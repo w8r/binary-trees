@@ -2,17 +2,17 @@ import test from 'blue-tape';
 import Node from '../src/node';
 
 const getParent = () => {
-  return new Node(1, 0, false,
-    new Node(2, 0, false,
-      new Node(3, 0, false, null, null),
-      new Node(3, 0, false, null, null)
+  return new Node(1, 0,
+    new Node(2, 0,
+      new Node(3, 0, null, null),
+      new Node(3, 0, null, null)
     ),
-    new Node(5, 0, false,
-      new Node(6, 0, false,
-        new Node(7, 0, false, null, null),
-        new Node(8, 0, false, null, null)
+    new Node(5, 0,
+      new Node(6, 0,
+        new Node(7, 0, null, null),
+        new Node(8, 0, null, null)
       ),
-      new Node(9, 0, false, null, new Node(10, 0, false, null, null))
+      new Node(9, 0, null, new Node(10, 0, null, null))
     ));
 };
 
@@ -28,10 +28,9 @@ test('Node', (t) => {
     let parent = {};
     let data = { a : 1 };
     let key = 'key';
-    let n = new Node(key, data, false, left, right, parent, 2);
+    let n = new Node(key, data, left, right, parent, 2);
 
     t.equals(n.parent, parent, 'parent');
-    t.notOk(n.color, parent, 'color');
     t.equals(n.left, left, 'left');
     t.equals(n.right, right, 'right');
     t.equals(n.height, 2, 'height');
@@ -43,24 +42,24 @@ test('Node', (t) => {
   });
 
   t.test('is root', (t) => {
-    t.ok(new Node(1, {}, false, null, null, null).isRoot());
-    t.notOk(new Node(1, {}, false, null, null, {}).isRoot());
+    t.ok(new Node(1, {}, null, null, null).isRoot());
+    t.notOk(new Node(1, {}, null, null, {}).isRoot());
 
     t.end();
   });
 
   t.test('is leaf', (t) => {
-    t.ok(new Node(1, {}, false, null, null, null).isLeaf());
-    t.notOk(new Node(1, {}, false, null, {}, {}).isLeaf());
-    t.notOk(new Node(1, {}, false, {}, null, {}).isLeaf());
+    t.ok(new Node(1, {}, null, null, null).isLeaf());
+    t.notOk(new Node(1, {}, null, {}, {}).isLeaf());
+    t.notOk(new Node(1, {}, {}, null, {}).isLeaf());
 
     t.end();
   });
 
   t.test('is left', (t) => {
-    let parent = new Node(0, {}, false,
-      new Node(1, {}, false, null, null),
-      new Node(2, {}, false, null, null));
+    let parent = new Node(0, {},
+      new Node(1, {}, null, null),
+      new Node(2, {}, null, null));
 
     t.ok(parent.left.isLeft());
     t.notOk(parent.isLeft());
@@ -70,9 +69,9 @@ test('Node', (t) => {
   });
 
   t.test('is right', (t) => {
-    let parent = new Node(0, {}, false,
-      new Node(1, {}, false, null, null),
-      new Node(2, {}, false, null, null));
+    let parent = new Node(0, {},
+      new Node(1, {}, null, null),
+      new Node(2, {}, null, null));
 
     t.ok(parent.right.isRight());
     t.notOk(parent.isRight());
