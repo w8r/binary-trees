@@ -1,34 +1,38 @@
+import Node from './node';
+import defaultCompare from './default_compare';
+
 export default class BST {
 
-
-  constructor(comparator) {
+  constructor(comparator = defaultCompare) {
     this.root = null;
-    this._compare = comparator || defaultComparator;
+    this.comparator = comparator;
     this.length = 0;
   }
 
 
-  insert(data) {
-    const node = new Node(data);
+  insert(key, data) {
     if (this.root === null) {
-      this.root = node;
+      this.root = new Node(key, data);
       this.length++;
     } else {
-      this.insertNode(node, this.root);
+      this.insertNode(key, data, this.root);
     }
   }
 
 
-  insertNode(node, parent) {
+  insertNode(key, data, parent) {
+    let node;
     while (true) {
-      const cmp = this._compare(node.data, parent.data);
+      const cmp = this.comparator(key, parent.key);
       if (cmp === 0) {
+        node = parent;
         break;
       }
       if (cmp > 0) {
         if (parent.right !== null) {
           parent = parent.right;
         } else {
+          node = new Node(key, data);
           node.parent = parent;
           parent.right = node;
           this.length++;
@@ -38,6 +42,7 @@ export default class BST {
         if (parent.left !== null) {
           parent = parent.left;
         } else {
+          node = new Node(key, data);
           node.parent = parent;
           parent.left = node;
           this.length++;
@@ -47,48 +52,38 @@ export default class BST {
     }
   }
 
-  remove(data) {
-    let node = this.find(data);
+  remove (key) {
+    if (!this.root) return null;
+    let node = this.find(key);
     if (node) {
-      this.removeNode(node, node.parent);
+      let fakeParent = null;
+      if (node === this.root) {
+        fakeParent = { left : this.root };
+      }
+
+      this.removeNode(node, node.parent || fakeParent);
+
+      if (fakeParent) {
+        this.root = fakeParent.left;
+        if (this.root) this.root.parent = null;
+      }
       this.length--;
     }
+    return node;
   }
 
 
   removeNode(node, parent) {
-    let p = node.parent;
-
-    // leaf
-    if (node.left === null && node.right === null) {
-      if (p.left === node) {
-        p.left = null;
+    if (node.isLeaf()) {
+      if (parent.left === node) {
+        parent.left = null;
       }
-      if (p.right === node) {
-        p.right = null;
+      if (parent.right === node) {
+        parent.right = null;
       }
-
-    // one ancestor
-    } else if (node.left === null || node.right === null) {
-      if (node.left === null) {
-        if (p.left === node) {
-          p.left = node.right;
-        } else {
-          p.right = node.right;
-        }
-        node.right.parent = p;
-      } else {
-        if (p.left === node) {
-          p.left = node.left;
-        } else {
-          p.right = node.left;
-        }
-        node.left.parent = p;
-      }
-
-    // 2 ancestors
-    } else {
+    } else if (node.left && node.right) { // two ancestors
       let successor = this.next(node, parent)
+      node.key  = successor.key;
       node.data = successor.data;
       if (successor.parent.left === successor) {
         successor.parent.left = successor.right;
@@ -101,14 +96,30 @@ export default class BST {
           successor.right.parent = successor.parent;
         }
       }
+    } else { // one ancestor
+      if (node.left === null) {
+        if (parent.left === node) {
+          parent.left = node.right;
+        } else {
+          parent.right = node.right;
+        }
+        node.right.parent = parent;
+      } else {
+        if (parent.left === node) {
+          parent.left = node.left;
+        } else {
+          parent.right = node.left;
+        }
+        node.left.parent = parent;
+      }
     }
   }
 
 
-  find(data) {
+  find(key) {
     let current = this.root;
-    while (current.data !== data) {
-      if (this._compare(data, current.data) < 0) {
+    while (current.key !== key) {
+      if (this.comparator(key, current.key) < 0) {
         current = current.left;
       } else {
         current = current.right;
@@ -122,13 +133,13 @@ export default class BST {
   }
 
 
-  getMin() {
-    return this._min(this.root).data;
+  min() {
+    return this.root ? this._min(this.root) : null;
   }
 
 
-  getMax() {
-    return this._max(this.root).data;
+  max() {
+    return this.root ? this._max(this.root) : null;
   }
 
 

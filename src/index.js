@@ -1,2 +1,2 @@
-export AVL from './tree';
+export AVL from './avl';
 export BST from './bst';

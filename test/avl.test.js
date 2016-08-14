@@ -1,5 +1,5 @@
 import test from 'blue-tape';
-import Tree from '../src/tree';
+import Tree from '../src/avl';
 
 const createTree = () => {
   const tree = new Tree();
@@ -13,7 +13,7 @@ const createTree = () => {
   return tree;
 };
 
-test('Tree', (t) => {
+test('AVL', (t) => {
 
   t.test('export class', (t) => {
     t.ok(Tree);
@@ -25,7 +25,7 @@ test('Tree', (t) => {
     let comparator = (a, b) => a - b;
     let tree = new Tree(comparator);
     t.equals(tree.root, null, 'root');
-    t.equals(tree.size, 0, 'size');
+    t.equals(tree.length, 0, 'size');
     t.equals(tree.comparator, comparator, 'comparator');
     t.equals(typeof (new Tree()).comparator, 'function', 'default comparator');
 
@@ -39,20 +39,20 @@ test('Tree', (t) => {
     tree.insert(1, data);
     t.equals(tree.root.key, 1, 'key');
     t.equals(tree.root.data, data, 'data');
-    t.equals(tree.size, 1, 'size');
+    t.equals(tree.length, 1, 'size');
 
 
     tree.insert(2, { a: 3});
     t.equals(tree.root.right.key, 2);
-    t.equals(tree.size, 2, 'size');
+    t.equals(tree.length, 2, 'size');
 
     tree.insert(-3, { a: 3});
     t.equals(tree.root.left.key, -3);
-    t.equals(tree.size, 3, 'size');
+    t.equals(tree.length, 3, 'size');
 
     tree.insert(0, { a: 3});
     t.equals(tree.root.left.right.key, 0);
-    t.equals(tree.size, 4, 'size');
+    t.equals(tree.length, 4, 'size');
 
     t.end();
   });
@@ -72,16 +72,34 @@ test('Tree', (t) => {
 
   t.test('remove', (t) => {
     const tree = createTree();
-    t.equals(tree.size, 6, 'before size');
+    t.equals(tree.length, 6, 'before size');
     t.equals(tree.remove(0.25), true, 'remove success');
-    t.equals(tree.size, 5, 'after size');
-    t.equals(tree.search(0.25), null, 'removed');
+    t.equals(tree.length, 5, 'after size');
+    t.equals(tree.find(0.25), null, 'removed');
     t.equals(tree.remove(0.25), false, 'cannot remove what is not in the tree');
 
     t.end();
   });
 
-  t.test('')
+
+  t.test('prev', (t) => {
+    t.end();
+  });
+
+
+  t.test('next', (t) => {
+    t.end();
+  });
+
+
+  t.test('min', (t) => {
+    t.end();
+  });
+
+
+  t.test('max', (t) => {
+    t.end();
+  });
 
   t.end();
 });

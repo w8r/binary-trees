@@ -52,6 +52,7 @@
     "eslint": "1.8.0",
     "eslint-config-xo": "0.7.1",
     "eslint-plugin-babel": "2.1.1",
+    "nodemon": "^1.10.0",
     "rimraf": "2.4.3",
     "tap-spec": "4.1.0",
     "zuul": "3.7.2"

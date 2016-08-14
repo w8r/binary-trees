@@ -9,7 +9,7 @@ export default class Node {
    * @param  {Node}    parent
    * @param  {Number}  height
    */
-  constructor(key, data, left, right, parent, height) {
+  constructor(key, data, left = null, right = null, parent = null, height = 0) {
     this.key    = key;
     this.data   = data;
     this.left   = left;
