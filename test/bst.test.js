@@ -39,6 +39,7 @@ test('BST', (t) => {
     });
     t.equals(tree.length, 4, 'length');
 
+    t.equals(tree.insert(30), null, 'cannot insert twice');
 
     t.end();
   });

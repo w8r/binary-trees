@@ -3,6 +3,10 @@ import defaultCompare from './default_compare';
 
 export default class BST {
 
+  /**
+   * @class BST
+   * @param {Function=} comparator
+   */
   constructor(comparator = defaultCompare) {
     this.root = null;
     this.comparator = comparator;
@@ -10,23 +14,34 @@ export default class BST {
   }
 
 
-  insert(key, data) {
+  /**
+   * @param {Number} key
+   * @param {*=} data
+   * @return {Node|null}
+   */
+  insert (key, data) {
     if (this.root === null) {
       this.root = new Node(key, data);
       this.length++;
+      return this.root;
     } else {
-      this.insertNode(key, data, this.root);
+      return this.insertNode(key, data, this.root);
     }
   }
 
 
-  insertNode(key, data, parent) {
+  /**
+   * @param {Number} key
+   * @param {*=} data
+   * @param {Node} parent
+   */
+  insertNode (key, data, parent) {
     let node;
     while (true) {
       const cmp = this.comparator(key, parent.key);
       if (cmp === 0) {
         node = parent;
-        break;
+        return null;
       }
       if (cmp > 0) {
         if (parent.right !== null) {
@@ -50,8 +65,14 @@ export default class BST {
         }
       }
     }
+    return node;
   }
 
+
+  /**
+   * @param {Number} key
+   * @return {Node|null}
+   */
   remove (key) {
     if (!this.root) return null;
     let node = this.find(key);
@@ -73,6 +94,9 @@ export default class BST {
   }
 
 
+  /**
+   * @param {Node} node
+   */
   removeNode(node, parent) {
     if (node.isLeaf()) {
       if (parent.left === node) {
@@ -116,8 +140,14 @@ export default class BST {
   }
 
 
-  find(key) {
+  /**
+   * @param {Number} key
+   * @return {Node|null}
+   */
+  find (key) {
     let current = this.root;
+
+    if (!current) return current;
     while (current.key !== key) {
       if (this.comparator(key, current.key) < 0) {
         current = current.left;
@@ -133,16 +163,26 @@ export default class BST {
   }
 
 
+  /**
+   * @return {Node|null}
+   */
   min() {
     return this.root ? this._min(this.root) : null;
   }
 
 
+  /**
+   * @return {Node|null}
+   */
   max() {
     return this.root ? this._max(this.root) : null;
   }
 
 
+  /**
+   * @param {Node} node
+   * @return {Node}
+   */
   _min(node) {
     let current = node;
     while (current.left !== null) {
@@ -152,6 +192,10 @@ export default class BST {
   }
 
 
+  /**
+   * @param {Node} node
+   * @return {Node}
+   */
   _max(node) {
     let current = node;
     while (current.right !== null) {
@@ -161,7 +205,11 @@ export default class BST {
   }
 
 
-  next(node) {
+  /**
+   * @param {Node} node
+   * @return {Node}
+   */
+  next (node) {
     if (node.right !== null) {
       return this._min(node.right);
     }
@@ -175,7 +223,11 @@ export default class BST {
   }
 
 
-  prev(node) {
+  /**
+   * @param {Node} node
+   * @return {Node}
+   */
+  prev (node) {
     if (node.left !== null) {
       return this._max(node.left);
     }
@@ -189,12 +241,23 @@ export default class BST {
   }
 
 
-  forEach(callback, context) {
+  /**
+   * @param {Function} callback
+   * @param {*=} context
+   * @return {BST} self
+   */
+  forEach (callback, context) {
     this.inOrder(this.root, callback, context);
+    return this;
   }
 
 
-  inOrder(node, callback, context) {
+  /**
+   * @param {Node} node
+   * @param {Function} callback
+   * @param {*=} context
+   */
+  inOrder (node, callback, context) {
     if (node !== null) {
       this.inOrder(node.left, callback, context);
       callback.call(context, node);
