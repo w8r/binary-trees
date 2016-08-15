@@ -76,28 +76,82 @@ test('AVL', (t) => {
     t.equals(tree.remove(0.25), true, 'remove success');
     t.equals(tree.length, 5, 'after size');
     t.equals(tree.find(0.25), null, 'removed');
-    t.equals(tree.remove(0.25), false, 'cannot remove what is not in the tree');
+    t.equals(tree.remove(0.25), null, 'cannot remove what is not in the tree');
+
+    t.end();
+  });
+
+  return t.end();
+
+
+  t.test('min', (t) => {
+    let tree = createTree();
+    t.equals(tree.min().key, -100, 'min');
+    tree.remove(-100);
+    t.equals(tree.min().key, -3, 'min');
+    tree.remove(0.25);
+    tree.remove(0);
+    tree.remove(-3);
+    tree.remove(2);
+    t.equals(tree.min(), null, 'empty');
+    t.end();
+  });
+
+
+  t.test('max', (t) => {
+    let tree = createTree();
+    t.equals(tree.max().key, 2, 'max');
+    tree.remove(2);
+    t.equals(tree.max().key, 1, 'max');
+    tree.remove(0.25);
+    tree.remove(0);
+    tree.remove(-3);
+    tree.remove(-100);
+    t.equals(tree.max(), null, 'empty');
+    t.end();
+  });
+
+
+  t.test('next', (t) => {
+    let tree = createTree();
+
+    t.equals(tree.next(tree.find(1)).key, 2, 'one');
+    t.equals(tree.next(tree.find(-100)).key, -3, 'another');
+    t.equals(tree.next(tree.find(2)), null, 'at end');
+
+    tree.remove(-3);
+    t.equals(tree.next(tree.find(-100)).key, 0);
 
     t.end();
   });
 
 
   t.test('prev', (t) => {
+    let tree = createTree();
+
+    t.equals(tree.prev(tree.find(1)).key, 0.25, 'one');
+    t.equals(tree.prev(tree.find(0.25)).key, 0, 'another');
+    t.equals(tree.prev(tree.find(-3)).key, -100, 'second');
+    t.equals(tree.prev(tree.find(-100)), null, 'at begin');
+
+    tree.remove(-3);
+    t.equals(tree.prev(tree.find(0)).key, -100);
+
     t.end();
   });
 
 
-  t.test('next', (t) => {
-    t.end();
-  });
+  t.test('find', (t) => {
+    let tree = createTree();
+    t.equals(tree.find(20), null);
+    t.equals(tree.find(-10).key, -10);
+    t.equals(tree.find(1).key, 1);
+    t.equals(tree.find(10).key, 10);
+    t.equals(tree.find(30).key, 30);
 
+    tree.remove(10);
+    t.equals(tree.find(10), null);
 
-  t.test('min', (t) => {
-    t.end();
-  });
-
-
-  t.test('max', (t) => {
     t.end();
   });
 

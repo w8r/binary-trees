@@ -89,7 +89,6 @@ test('BST', (t) => {
     tree.remove(1);
     tree.remove(10);
     tree.remove(30);
-    console.log(tree);
     t.equals(tree.min(), null, 'empty');
     t.end();
   });
@@ -98,6 +97,12 @@ test('BST', (t) => {
   t.test('max', (t) => {
     let tree = getTree();
     t.equals(tree.max().key, 30, 'max');
+    tree.remove(30);
+    t.equals(tree.max().key, 10, 'max');
+    tree.remove(10);
+    tree.remove(1);
+    tree.remove(-10);
+    t.equals(tree.max(), null, 'empty');
     t.end();
   });
 

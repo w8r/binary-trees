@@ -1,6 +1,11 @@
 import Node from './node';
 import BST  from './bst';
 
+
+/**
+ * @param  {Node|null} node
+ * @return {Number}
+ */
 const height = (node) => {
   return (node === null) ? -1 : node.height;
 };
@@ -8,12 +13,13 @@ const height = (node) => {
 export default class Tree extends BST {
 
   /**
-   * @constructor
+   * @class AVL
    * @param  {Function=} comparator
    */
   constructor(comparator) {
     super(comparator);
   }
+
 
   static height = height
 
@@ -152,18 +158,18 @@ export default class Tree extends BST {
 
   // Remove nodes
 
-  remove(key) {
+  remove (key) {
     const node = this.find(key, this.root);
     if (node) {
       this._remove(node);
       this.length--;
-      return true;
+      return node;
     }
-    return false;
+    return null;
   }
 
 
-  _remove(node) {
+  _remove (node) {
     if (node.isLeaf()) { // remove and balance up
       let parent = node.parent;
       if (parent) {
@@ -178,21 +184,19 @@ export default class Tree extends BST {
         }
 
         this.balance(parent);
-      } else { // at root
+      } else { // at root, smart huh
         this.root = null;
       }
-      return true;
     } else { // Handle stem cases
-      let replacement = node.left ? node.left.max() : null;
+      let replacement = this.next(node);
       if (replacement === node) replacement = null;
       if (replacement) {
         node.key  = replacement.key;
         node.data = replacement.data;
         this._remove(replacement);
-        return true;
       }
 
-      replacement = node.right ? node.right.min() : null;
+      replacement = this.prev(node);
       if (replacement === node) replacement = null;
       if (replacement) {
         node.key = replacement.key;
@@ -200,37 +204,6 @@ export default class Tree extends BST {
         this._remove(replacement);
       }
     }
-    return false;
-  }
-
-
-  /**
-   * @param  {*} key
-   * @param  {Node=} subtree
-   * @return {Node|null}
-   */
-  find (key, subtree = this.root) {
-    return this._find(key, subtree);
-  }
-
-
-  /**
-   * @param  {*} key
-   * @param  {Node} subtree
-   * @return {Node|null}
-   */
-  _find (key, subtree) {
-    if (subtree) {
-      var cmp = this.comparator(key, subtree.key);
-      if (cmp === 0) {
-        return subtree;
-      } else if (cmp < 0) {
-        return this._find(key, subtree.left);
-      } else if (cmp > 0) {
-        return this._find(key, subtree.right);
-      }
-    }
-    return null;
   }
 
 }

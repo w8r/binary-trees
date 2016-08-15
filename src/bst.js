@@ -97,7 +97,7 @@ export default class BST {
   /**
    * @param {Node} node
    */
-  removeNode(node, parent) {
+  removeNode (node, parent) {
     if (node.isLeaf()) {
       if (parent.left === node) {
         parent.left = null;
