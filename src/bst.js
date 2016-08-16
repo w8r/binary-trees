@@ -1,6 +1,7 @@
 import Node from './node';
 import defaultCompare from './default_compare';
 
+
 export default class BST {
 
   /**
@@ -88,7 +89,6 @@ export default class BST {
         this.root = fakeParent.left;
         if (this.root) this.root.parent = null;
       }
-      this.length--;
     }
     return node;
   }
@@ -137,6 +137,7 @@ export default class BST {
         node.left.parent = parent;
       }
     }
+    this.length--;
   }
 
 
@@ -263,6 +264,42 @@ export default class BST {
       callback.call(context, node);
       this.inOrder(node.right, callback, context);
     }
+  }
+
+
+  /**
+   * Empty at once
+   */
+  clear () {
+    this.root = null;
+    this.length = 0;
+  }
+
+
+  /**
+   * Removes and returns top element
+   * @return {Node|null}
+   */
+  pop () {
+    const top = this.max();
+    if (top) {
+      this.removeNode(top, top.parent);
+      return top;
+    }
+    return null;
+  }
+
+
+  /**
+   * Removes and returns bottom element
+   */
+  shift () {
+    const begin = this.min();
+    if (begin) {
+      this.removeNode(begin, begin.parent);
+      return begin;
+    }
+    return null;
   }
 
 }

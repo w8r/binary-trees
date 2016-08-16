@@ -3,8 +3,8 @@ import BST  from '../src/bst';
 
 test('BST', (t) => {
 
-  const getTree = () => {
-    let tree = new BST();
+  const createTree = (comp) => {
+    let tree = new BST(comp);
 
     tree.insert(1);
     tree.insert(-10);
@@ -15,7 +15,7 @@ test('BST', (t) => {
   };
 
   t.test('insert & compare', (t) => {
-    let tree = getTree();
+    let tree = createTree();
 
     let sorted = [-10, 1, 10, 30];
 
@@ -25,14 +25,9 @@ test('BST', (t) => {
     t.equals(tree.length, 4, 'length');
 
     sorted = [30, 10, 1, -10];
-    tree = new BST((a, b) => {
+    tree = createTree((a, b) => {
       return a > b ? -1 : a === b ? 0 : 1;
     });
-
-    tree.insert(1);
-    tree.insert(-10);
-    tree.insert(30);
-    tree.insert(10);
 
     tree.forEach((n) => {
       t.equals(n.key, sorted.shift(), 'key');
@@ -46,7 +41,7 @@ test('BST', (t) => {
 
 
   t.test('remove', (t) => {
-    let tree = getTree();
+    let tree = createTree();
 
     let sorted = [-10, 1, 10, 30], i;
 
@@ -73,7 +68,7 @@ test('BST', (t) => {
     t.equals(tree.length, 0, 'empty');
     t.equals(tree.remove(-10), null, 'remove what is not in the tree');
 
-    tree = getTree();
+    tree = createTree();
     tree.forEach((n) => tree.remove(n.key));
     t.equals(tree.length, 0, 'empty');
 
@@ -82,7 +77,7 @@ test('BST', (t) => {
 
 
   t.test('min', (t) => {
-    let tree = getTree();
+    let tree = createTree();
     t.equals(tree.min().key, -10, 'min');
     tree.remove(-10);
     t.equals(tree.min().key, 1, 'min');
@@ -95,7 +90,7 @@ test('BST', (t) => {
 
 
   t.test('max', (t) => {
-    let tree = getTree();
+    let tree = createTree();
     t.equals(tree.max().key, 30, 'max');
     tree.remove(30);
     t.equals(tree.max().key, 10, 'max');
@@ -108,7 +103,7 @@ test('BST', (t) => {
 
 
   t.test('next', (t) => {
-    let tree = getTree();
+    let tree = createTree();
 
     t.equals(tree.next(tree.find(1)).key, 10);
     t.equals(tree.next(tree.find(10)).key, 30);
@@ -122,7 +117,7 @@ test('BST', (t) => {
 
 
   t.test('prev', (t) => {
-    let tree = getTree();
+    let tree = createTree();
 
     t.equals(tree.prev(tree.find(1)).key, -10);
     t.equals(tree.prev(tree.find(10)).key, 1);
@@ -137,7 +132,7 @@ test('BST', (t) => {
 
 
   t.test('find', (t) => {
-    let tree = getTree();
+    let tree = createTree();
     t.equals(tree.find(20), null);
     t.equals(tree.find(-10).key, -10);
     t.equals(tree.find(1).key, 1);
@@ -146,6 +141,36 @@ test('BST', (t) => {
 
     tree.remove(10);
     t.equals(tree.find(10), null);
+
+    t.end();
+  });
+
+
+  t.test('clear', (t) => {
+    const tree = createTree();
+    t.equals(tree.length, 4, 'before');
+    tree.clear();
+    t.equals(tree.length, 0, 'after');
+    t.equals(tree.root, null, 'root');
+
+    t.end();
+  });
+
+  t.test('pop', (t) => {
+    const tree = createTree();
+    t.equals(tree.pop().key, 30, 'top');
+    t.equals(tree.length, 3, 'length reduced');
+    t.equals(tree.max().key, 10, 'top moved');
+
+    t.end();
+  });
+
+
+  t.test('shift', (t) => {
+    const tree = createTree();
+    t.equals(tree.shift().key, -10, 'top');
+    t.equals(tree.length, 3, 'length reduced');
+    t.equals(tree.min().key, 1, 'bottom moved');
 
     t.end();
   });

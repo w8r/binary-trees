@@ -1,8 +1,8 @@
 import test from 'blue-tape';
 import Tree from '../src/avl';
 
-const createTree = () => {
-  const tree = new Tree();
+const createTree = (comp) => {
+  const tree = new Tree(comp);
   const data = { a: 3 };
   tree.insert(   1, data);
   tree.insert(   2, data);
@@ -21,6 +21,7 @@ test('AVL', (t) => {
     t.end();
   });
 
+
   t.test('constructor', (t) => {
     let comparator = (a, b) => a - b;
     let tree = new Tree(comparator);
@@ -31,6 +32,7 @@ test('AVL', (t) => {
 
     t.end();
   });
+
 
   t.test('insert', (t) => {
     const tree = new Tree();
@@ -73,15 +75,21 @@ test('AVL', (t) => {
   t.test('remove', (t) => {
     const tree = createTree();
     t.equals(tree.length, 6, 'before size');
-    t.equals(tree.remove(0.25), true, 'remove success');
+    t.equals(tree.remove(0.25).key, 0.25, 'remove success');
     t.equals(tree.length, 5, 'after size');
     t.equals(tree.find(0.25), null, 'removed');
     t.equals(tree.remove(0.25), null, 'cannot remove what is not in the tree');
+    tree.remove(-100);
+    tree.remove(0);
+    tree.remove(-3);
+    tree.remove(2);
+    tree.remove(1);
+
+    t.equals(tree.length, 0, 'empty');
+    t.equals(tree.root, null, 'null root');
 
     t.end();
   });
-
-  return t.end();
 
 
   t.test('min', (t) => {
@@ -151,6 +159,26 @@ test('AVL', (t) => {
 
     tree.remove(10);
     t.equals(tree.find(10), null);
+
+    t.end();
+  });
+
+
+  t.test('pop', (t) => {
+    const tree = createTree();
+    t.equals(tree.pop().key, 30, 'top');
+    t.equals(tree.length, 3, 'length reduced');
+    t.equals(tree.max().key, 10, 'top moved');
+
+    t.end();
+  });
+
+
+  t.test('shift', (t) => {
+    const tree = createTree();
+    t.equals(tree.shift().key, -10, 'top');
+    t.equals(tree.length, 3, 'length reduced');
+    t.equals(tree.min().key, 1, 'bottom moved');
 
     t.end();
   });

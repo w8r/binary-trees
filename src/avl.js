@@ -162,7 +162,6 @@ export default class Tree extends BST {
     const node = this.find(key, this.root);
     if (node) {
       this._remove(node);
-      this.length--;
       return node;
     }
     return null;
@@ -204,6 +203,7 @@ export default class Tree extends BST {
         this._remove(replacement);
       }
     }
+    this.length--;
   }
 
 }
