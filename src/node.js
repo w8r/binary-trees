@@ -15,7 +15,7 @@ export default class Node {
     this.left   = left   || null;
     this.right  = right  || null;
     this.parent = parent || null;
-    this.height = height || 0;
+    this.height = height || 1;
 
     if (left)  left.parent  = this;
     if (right) right.parent = this;

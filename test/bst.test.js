@@ -156,6 +156,7 @@ test('BST', (t) => {
     t.end();
   });
 
+
   t.test('pop', (t) => {
     const tree = createTree();
     t.equals(tree.pop().key, 30, 'top');
@@ -171,6 +172,40 @@ test('BST', (t) => {
     t.equals(tree.shift().key, -10, 'top');
     t.equals(tree.length, 3, 'length reduced');
     t.equals(tree.min().key, 1, 'bottom moved');
+
+    t.end();
+  });
+
+  t.test('forEach', (t) => {
+    const tree = createTree();
+    let sorted = [-10, 1, 10, 30];
+    tree.forEach((n) => {
+      t.equals(n.key, sorted.shift(), 'key');
+    });
+
+    t.end();
+  });
+
+  t.test('forEach', (t) => {
+    const tree = createTree();
+    let sorted = [-10, 1, 10, 30];
+    const ctx = {};
+    tree.forEach(function (n) {
+      t.equals(n.key, sorted.shift(), 'key');
+      t.equals(this, ctx, 'context');
+    }, ctx);
+
+    t.end();
+  });
+
+  t.test('inorderNonRecursive', (t) => {
+    const tree = createTree();
+    let sorted = [-10, 1, 10, 30];
+    const ctx = {};
+    tree.inorderNonRecursive(function (n) {
+      t.equals(n.key, sorted.shift(), 'key');
+      t.equals(this, ctx, 'context');
+    }, ctx);
 
     t.end();
   });

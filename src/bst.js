@@ -167,7 +167,7 @@ export default class BST {
   /**
    * @return {Node|null}
    */
-  min() {
+  min () {
     return this.root ? this._min(this.root) : null;
   }
 
@@ -175,7 +175,7 @@ export default class BST {
   /**
    * @return {Node|null}
    */
-  max() {
+  max () {
     return this.root ? this._max(this.root) : null;
   }
 
@@ -184,7 +184,7 @@ export default class BST {
    * @param {Node} node
    * @return {Node}
    */
-  _min(node) {
+  _min (node) {
     let current = node;
     while (current.left !== null) {
       current = current.left;
@@ -197,7 +197,7 @@ export default class BST {
    * @param {Node} node
    * @return {Node}
    */
-  _max(node) {
+  _max (node) {
     let current = node;
     while (current.right !== null) {
       current = current.right;
@@ -268,6 +268,29 @@ export default class BST {
 
 
   /**
+   * As in title
+   * @param {Function} callback
+   * @param {*=} context
+   * @return {BST} tree
+   */
+  inorderNonRecursive (callback, context) {
+    let node = this.root;
+    while (node.left) node = node.left;
+    while (node) {
+      callback.call(context, node);
+      if (node.right) {
+        node = node.right;
+        while (node.left) node = node.left;
+      } else {
+        while (node.parent && node === node.parent.right) node = node.parent
+        node = node.parent
+      }
+    }
+    return this;
+  }
+
+
+  /**
    * Empty at once
    */
   clear () {
@@ -284,9 +307,8 @@ export default class BST {
     const top = this.max();
     if (top) {
       this.removeNode(top, top.parent);
-      return top;
     }
-    return null;
+    return top;
   }
 
 
@@ -297,9 +319,17 @@ export default class BST {
     const begin = this.min();
     if (begin) {
       this.removeNode(begin, begin.parent);
-      return begin;
     }
-    return null;
+    return begin;
   }
 
-}
+
+  toArray () {
+    let accum = [];
+    this.forEach((n) => {
+      accum.push({ key: n.key, data: n.data });
+    });
+    return accum;
+  }
+
+ }

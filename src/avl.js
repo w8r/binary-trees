@@ -6,9 +6,15 @@ import BST  from './bst';
  * @param  {Node|null} node
  * @return {Number}
  */
-const height = (node) => {
-  return (node === null) ? -1 : node.height;
-};
+const height = (node) => (node === null) ? 0 : node.height;
+
+
+/**
+ * @param  {Node} node
+ * @return {Number}
+ */
+const balanceFactor = (node) => height(node.left) - height(node.right);
+
 
 export default class Tree extends BST {
 
@@ -23,17 +29,20 @@ export default class Tree extends BST {
 
   static height = height
 
+  static balanceFactor = balanceFactor
+
 
   /**
    * Max depth of the tree
    * @return {Number}
    */
-  depth (node = this.root) {
-    if (!node) {
-      return 0;
-    } else {
-      return 1 + Math.max(this.depth(node.left), this.depth(node.right));
-    }
+  depth () {
+    return this._height(this.root);
+  }
+
+
+  _height (node) {
+    return node ? (1 + Math.max(height(node.left), height(node.right))) : 0;
   }
 
   // instertion
@@ -61,56 +70,32 @@ export default class Tree extends BST {
    * @param  {Node} subtree
    * @return {Node|null}
    */
-  _insert(key, data, subtree) {
+  _insert (key, data, subtree) {
     var cmp = this.comparator(key, subtree.key);
     if (cmp < 0) {
       if (subtree.left) {
         return this._insert(key, data, subtree.left);
       } else {
-        let child = new Node(key, data, null, null, subtree, 1);
+        let child = new Node(key, data, null, null, subtree);
         subtree.left = child;
-        this.balance(child);
+        subtree.height = Math.max(height(subtree.left), height(subtree.right)) + 1;
+        this.balance(subtree);
         return child;
       }
     } else {
       if (subtree.right) {
         return this._insert(key, data, subtree.right);
       } else {
-        let child = new Node(key, data, null, null, subtree, 1);
+        let child = new Node(key, data, null, null, subtree);
         subtree.right = child;
-        this.balance(child);
+        subtree.height = Math.max(height(subtree.left), height(subtree.right)) + 1;
+        this.balance(subtree);
         return child;
       }
     }
   }
 
   // Balancing tree
-
-  /**
-   * @param  {Node} node
-   */
-  updateHeightUpwards (node) {
-    if (!node) return;
-
-    const lHeight = node.left  ? node.left.height  : 0;
-    const rHeight = node.right ? node.right.height : 0;
-    node.height = Math.max(lHeight, rHeight) + 1;
-    this.updateHeightUpwards(node.parent);
-  }
-
-
-  /**
-   * @param  {Node} node
-   * @return {Number}
-   */
-  lrDifference (node) {
-    if (!node) return 0;
-
-    const lHeight = node.left  ? node.left.height  : 0;
-    const rHeight = node.right ? node.right.height : 0;
-    return lHeight - rHeight;
-  }
-
 
   /**
    * @param  {Node} node
@@ -124,7 +109,7 @@ export default class Tree extends BST {
       node = this.rotateLeft(node);
     } else if (height(node.right) - height(node.left) > 1) {
       if (height(node.right.right) - height(node.right.left) > 1) {
-        node.right = rotateLeft(node.right);
+        node.right = this.rotateLeft(node.right);
       }
       node = this.rotateRight(node);
     }
@@ -161,49 +146,64 @@ export default class Tree extends BST {
   remove (key) {
     const node = this.find(key, this.root);
     if (node) {
-      this._remove(node);
-      return node;
+      this.removeNode(node, node.parent);
     }
-    return null;
+    return node;
   }
 
 
-  _remove (node) {
+  removeNode (node, parent) {
     if (node.isLeaf()) { // remove and balance up
-      let parent = node.parent;
       if (parent) {
-        if (node.isLeft() + node.isRight() === 0) {
-          throw new Error('Tree is invalid');
-        }
-
         if (node.isLeft()) {
           parent.left = null;
         } else if (node.isRight()) {
           parent.right = null;
         }
-
         this.balance(parent);
       } else { // at root, smart huh
         this.root = null;
       }
-    } else { // Handle stem cases
-      let replacement = this.next(node);
-      if (replacement === node) replacement = null;
-      if (replacement) {
+    } else if (node.left && node.right) { // two ancestors
+      let replacement = node.left;
+
+      // Special case: the in-order predecessor
+      // is right below the node to delete
+      if (!replacement.right) {
         node.key  = replacement.key;
         node.data = replacement.data;
-        this._remove(replacement);
-      }
+        node.left = replacement.left;
+        if (replacement.left) {
+          replacement.left.parent = node;
+        }
+      } else {
 
-      replacement = this.prev(node);
-      if (replacement === node) replacement = null;
-      if (replacement) {
-        node.key = replacement.key;
-        node.data = replacement.data;
-        this._remove(replacement);
+        // After this loop, replacement is the right-most leaf in the left subtree
+        // and deletePath the path from the root (inclusive) to replacement (exclusive)
+        replacement = this_max(replacement);
+        node.key    = replacement.key;
+        node.data   = replacement.data;
+
+        replacement.parent.right = replacement.left;
+        if (replacement.left) replacement.left.parent = replacement.parent;
+      }
+      this.balance(parent);
+    } else { // 1 ancestor
+      let replacement = node.left || node.right;
+
+      if (!parent) {
+        this.root = replacement;
+        replacement.parent = null;
+      } else {
+        if (node.isLeft()) {
+          parent.left = replacement;
+        } else {
+          parent.right = replacement;
+        }
+        replacement.parent = parent;
+        this.balance(parent);
       }
     }
     this.length--;
   }
-
 }
