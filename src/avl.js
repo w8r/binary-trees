@@ -65,10 +65,15 @@ export default class Tree extends BST {
     if (this.root) {
       inserted = this.insertNode(key, data, this.root);
     } else {
-      inserted = this.root = new Node(key, data);
+      inserted = this.root = this.createNode(key, data);
+      this.length++;
     }
-    this.length++;
     return inserted;
+  }
+
+
+  createNode (key, data, left, right, parent, height) {
+    return new Node(key, data, left, right, parent, height);
   }
 
 
@@ -79,28 +84,30 @@ export default class Tree extends BST {
    * @return {Node|null}
    */
   insertNode (key, data, subtree) {
-    var cmp = this.comparator(key, subtree.key);
+    let child = null;
+    const cmp = this.comparator(key, subtree.key);
     if (cmp < 0) {
       if (subtree.left) {
         return this.insertNode(key, data, subtree.left);
       } else {
-        const child = new Node(key, data, null, null, subtree);
+        child = this.createNode(key, data, null, null, subtree);
         subtree.left = child;
         subtree.height = Math.max(height(subtree.left), height(subtree.right)) + 1;
         this.balance(subtree);
-        return child;
+        this.length++;
       }
     } else {
       if (subtree.right) {
         return this.insertNode(key, data, subtree.right);
       } else {
-        const child = new Node(key, data, null, null, subtree);
+        child = this.createNode(key, data, null, null, subtree);
         subtree.right = child;
         subtree.height = Math.max(height(subtree.left), height(subtree.right)) + 1;
         this.balance(subtree);
-        return child;
+        this.length++;
       }
     }
+    return child;
   }
 
   // Balancing tree
@@ -125,11 +132,45 @@ export default class Tree extends BST {
     return node;
   }
 
+  balance (node) {
+    while (node) {
+      var lh = node.left  ? node.left.height  : 0;
+      var rh = node.right ? node.right.height : 0;
+
+      if (lh - rh > 1) {
+        if (node.left.right &&
+            (!node.left.left || node.left.left.height < node.left.right.height)) {
+          this.rotateLeft(node.left);
+        }
+        this.rotateRight(node);
+      } else if (rh - lh > 1) {
+        if (node.right.left &&
+            (!node.right.right ||
+             node.right.right.height < node.right.left.height)) {
+          this.rotateRight(node.right);
+        }
+        this.rotateLeft(node);
+      }
+
+      // Recalculate the left and right node's heights
+      lh = node.left  ? node.left.height  : 0;
+      rh = node.right ? node.right.height : 0;
+
+      // Set this node's height
+      node.height = Math.max(lh, rh) + 1;
+
+      node = node.parent;
+    }
+  }
+
 
   rotateLeft (node) {
     let left    = node.left;
     node.left   = left.right;
+    if (node.left) node.left.parent = node;
+
     left.right  = node;
+    if (left.right) left.right.parent = left;
 
     node.height = Math.max(height(node.left), height(node.right)) + 1;
     left.height = Math.max(height(left.left), height(left.right)) + 1;
@@ -138,10 +179,35 @@ export default class Tree extends BST {
   }
 
 
+  rotateLeft (node) {
+      // Re-assign parent-child references for the parent of the node being removed
+    if (node.isLeft()) {
+      node.parent.left = node.right;
+      node.right.parent = node.parent;
+    } else if (node.isRight()) {
+      node.parent.right = node.right;
+      node.right.parent = node.parent;
+    } else {
+      this.root = node.right;
+      this.root.parent = null;
+    }
+
+    // Re-assign parent-child references for the child of the node being removed
+    var temp = node.right;
+    node.right = node.right.left;
+    if (node.right != null) node.right.parent = node;
+    temp.left   = node;
+    node.parent = temp;
+  }
+
+
   rotateRight (node) {
     let right    = node.right;
     node.right   = right.left;
+    if (node.right) node.right.parent = node;
+
     right.left   = node;
+    if (right.left) right.left.parent = right;
 
     node.height  = Math.max(height(node.left), height(node.right)) + 1;
     right.height = Math.max(height(right.left), height(right.right)) + 1;
@@ -149,18 +215,38 @@ export default class Tree extends BST {
   }
 
 
+  rotateRight (node) {
+    // Re-assign parent-child references for the parent of the node being removed
+    if (node.isLeft()) {
+      node.parent.left = node.left;
+      node.left.parent = node.parent;
+    } else if (node.isRight()) {
+      node.parent.right = node.left;
+      node.left.parent = node.parent;
+    } else {
+      this.root = node.left;
+      this.root.parent = null;
+    }
+
+    // Re-assign parent-child references for the child of the node being removed
+    var temp = node.left;
+    node.left = node.left.right;
+    if (node.left != null) node.left.parent = node;
+    temp.right = node;
+    node.parent = temp;
+  }
+
+
   // Remove nodes
 
   remove (key) {
-    const node = this.find(key, this.root);
-    if (node) {
-      this.removeNode(node, node.parent);
-    }
+    const node = BST.prototype.remove.call(this, key);
+    if (node) this.balance(node.parent);
     return node;
   }
 
 
-  removeNode (node, parent) {
+  __removeNode (node, parent) {
     if (node.isLeaf()) { // remove and balance up
       if (parent) {
         if (node.isLeft()) {
@@ -173,6 +259,7 @@ export default class Tree extends BST {
         this.root = null;
       }
     } else if (node.left && node.right) { // two ancestors
+
       let replacement = node.left;
 
       // Special case: the in-order predecessor
@@ -188,7 +275,7 @@ export default class Tree extends BST {
 
         // After this loop, replacement is the right-most leaf in the left subtree
         // and deletePath the path from the root (inclusive) to replacement (exclusive)
-        replacement = this_max(replacement);
+        replacement = this._max(replacement);
         node.key    = replacement.key;
         node.data   = replacement.data;
 

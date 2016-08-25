@@ -27,7 +27,8 @@
     "postcoveralls": "rimraf coverage",
     "postpublish": "git push origin master --follow-tags",
     "deploy": "git pull --rebase origin master && git push origin master",
-    "zuul": "babel-node test/*.test.js && zuul --local 9966 -- test/*.test.js"
+    "zuul": "babel-node test/*.test.js && zuul --local 9966 -- test/*.test.js",
+    "benchmark": "babel-node bench/index.js"
   },
   "bugs": {
     "url": "https://github.com/w8r/rb-tree/issues"

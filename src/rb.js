@@ -55,11 +55,11 @@ export default class RBTree extends BST {
 				  node = parent.parent;
 			  } else if (node === parent.right) {
 				  node = parent;
-				  this.leftRotate(node);
+				  this.rotateLeft(node);
 			  } else {
 				  parent.color        = BLACK;
 				  parent.parent.color = RED;
-				  this.rightRotate(parent.parent);
+				  this.rotateRight(parent.parent);
 			  }
 		  } else {
 			  let uncle = parent.parent.left;
@@ -70,11 +70,11 @@ export default class RBTree extends BST {
 				  node = parent.parent;
 			  } else if (node === parent.left) {
 				  node = parent;
-				  this.rightRotate(node);
+				  this.rotateRight(node);
 			  } else {
 				  parent.color = BLACK;
 				  parent.parent.color = RED;
-				  this.leftRotate(parent.parent);
+				  this.rotateLeft(parent.parent);
 			  }
 		  }
 	  }
@@ -86,7 +86,7 @@ export default class RBTree extends BST {
    * Rotate the node with its right child.
    * @param node {Node} The node to rotate.
    */
-  leftRotate (node) {
+  rotateLeft (node) {
 	  let child = node.right;
   	node.right = child.left;
 
@@ -110,7 +110,7 @@ export default class RBTree extends BST {
    * @param node {Node} The node to rotate.
    * @return {void}
    */
-  rightRotate (node) {
+  rotateRight (node) {
   	let child = node.left;
   	node.left = child.right;
 
@@ -166,7 +166,7 @@ export default class RBTree extends BST {
 			  if (sibling && sibling.color === RED) {
   				sibling.color = BLACK;
   				parent.color = RED;
-  				this.leftRotate(parent);
+  				this.rotateLeft(parent);
   				sibling = parent.right;
   			}
 
@@ -179,13 +179,13 @@ export default class RBTree extends BST {
     			if (!sibling.right || sibling.right.color === BLACK) {
     				sibling.left.color = BLACK;
     				sibling.color = RED;
-    				this.rightRotate(sibling);
+    				this.rotateRight(sibling);
     				sibling = parent.right;
     			}
     			sibling.color = parent.color;
     			parent.color = BLACK;
     			sibling.right.color = BLACK;
-    			this.leftRotate(parent);
+    			this.rotateLeft(parent);
     			node = this.root;
     		}
   		} else {
@@ -193,7 +193,7 @@ export default class RBTree extends BST {
   			if (sibling && sibling.color === RED) {
   				sibling.color = BLACK;
   				parent.color = RED;
-  				this.rightRotate(parent);
+  				this.rotateRight(parent);
   				sibling = parent.left;
   			}
 
@@ -206,13 +206,13 @@ export default class RBTree extends BST {
   				if (!sibling.left || sibling.left.color === BLACK) {
   					sibling.right.color = BLACK;
   					sibling.color = RED;
-  					this.leftRotate(sibling);
+  					this.rotateLeft(sibling);
   					sibling = parent.left;
   				}
   				sibling.color = parent.color;
   				parent.color = BLACK;
   				sibling.left.color = BLACK;
-  				this.rightRotate(parent);
+  				this.rotateRight(parent);
   				node = this.root;
   			}
   		}

@@ -1,5 +1,6 @@
 import test from 'blue-tape';
 import Tree from '../src/avl';
+import balanceCheck from './helpers/avl_test_balance';
 
 const createTree = (comp) => {
   const tree = new Tree(comp);
@@ -13,110 +14,7 @@ const createTree = (comp) => {
   return tree;
 };
 
-const sanityCheck = (tree, ...args) => {
-  const node = args.length === 2 ? args[1] : tree.root;
-  // trival - no sanity check needed, as either the tree
-  // is empty or there is only one node in the tree
-  if (node === null || node.isLeaf() && node.parent === null) return true;
-
-  const expectedHeight = Math.max(tree._height(node.left), tree._height(node.right)) + 1;
-  console.log(expectedHeight, node.height, node.key);
-  if (node.height !== expectedHeight) {
-    throw new Error(['Invalid height for node ', node.key, ': ',
-      node.height, ' instead of ', + expectedHeight].join(' '));
-  }
-
-  // balance factor
-  const bFactor = Tree.balanceFactor(node);
-  console.log(node.key, bFactor);
-  if (bFactor < -1 || balFactor > 1) {
-    throw new Error(['Balance factor for node ', node.key, 'is', bFactor].join(' '));
-  }
-
-  // no circular references
-  if (node.left === node) {
-    throw new Error(['Circular reference in left child of node', node.key].join(' '));
-  }
-
-  if (node.right === node) {
-    throw new Error('Circular reference in right child of node', node.key);
-  }
-
-  if (node.left) {
-    if (node.left.parent !== node) {
-      throw new Error('left child detached');
-    }
-
-    if (tree.comparator(node.left.key, node.key) > 0) {
-      throw new Error('left child has a greater key');
-    }
-    sanityCheck(tree, node.left);
-  }
-
-  if (node.right) {
-    if (node.right.parent !== node) {
-      throw new Error('right child detached');
-    }
-
-    if (tree.comparator(node.left.key, node.key) < 0) {
-      throw new Error('right child has a lower key');
-    }
-    sanityCheck(tree, node.right);
-  }
-};
-
-
-/**
- * Check the recorded height is correct for every node
- * Throws if one height doesn't match
- */
-const checkHeightCorrect = (tree, node) => {
-  if (!node) return;
-
-  if (node.left && node.left.height === undefined) {
-    throw new Error('Undefined height for node ' + node.left.key);
-  }
-  if (node.right && node.right.height === undefined) {
-    throw new Error('Undefined height for node ' + node.right.key);
-  }
-  if (node.height === undefined) {
-    throw new Error('Undefined height for node ' + node.key);
-  }
-
-  const leftH = node.left ? node.left.height : 0;
-  const rightH = node.right ? node.right.height : 0;
-  const expectedHeight = 1 + Math.max(leftH, rightH);
-
-  if (node.height !== expectedHeight) {
-    console.error('Height constraint failed for node ' + node.key + ' (' + node.height + ') ' + expectedHeight);
-  }
-  if (node.left)  checkHeightCorrect(tree, node.left);
-  if (node.right) checkHeightCorrect(tree, node.right);
-};
-
-
-/**
- * Check that the balance factors are all between -1 and 1
- */
-const checkBalanceFactors = (tree, node) => {
-  if (Math.abs(Tree.balanceFactor(node)) > 1) {
-    throw new Error('Tree is unbalanced at node ' + node.key);
-  }
-  if (node.left)  checkBalanceFactors(tree, node.left);
-  if (node.right) checkBalanceFactors(tree, node.right);
-};
-
-
-/**
- * When checking if the BST conditions are met, also check that the heights are correct
- * and the tree is balanced
- */
-const checkAVLTree = (tree) => {
-  checkHeightCorrect(tree, tree.root);
-  checkBalanceFactors(tree, tree.root);
-};
-
-false && test('AVL', (t) => {
+test('AVL', (t) => {
 
   t.test('export class', (t) => {
     t.ok(Tree);
@@ -219,12 +117,11 @@ false && test('AVL', (t) => {
     tree.remove(2);
     t.equals(tree.max().key, 1, 'max');
     tree.remove(0.25);
-    console.log(tree.remove(0), tree.toArray());
     tree.remove(-3);
     tree.remove(-100);
     tree.remove(1);
+    tree.remove(0);
     t.equals(tree.max(), null, 'empty');
-    console.log(tree.toArray());
     t.end();
   });
 
@@ -291,13 +188,11 @@ false && test('AVL', (t) => {
     t.end();
   });
 
-  // t.test('balanced', (t) => {
-  //   const tree = createTree();
-  //
-  //   setTimeout(() => checkAVLTree(tree));
-  //
-  //   t.end();
-  // });
+  t.test('balanced', (t) => {
+     const tree = createTree();
+     balanceCheck(tree, t);
+     t.end();
+  });
 
   t.end();
 });
