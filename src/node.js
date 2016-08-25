@@ -7,15 +7,13 @@ export default class Node {
    * @param  {Node}    left
    * @param  {Node}    right
    * @param  {Node}    parent
-   * @param  {Number}  height
    */
-  constructor (key, data, left, right, parent, height) {
+  constructor (key, data, left, right, parent) {
     this.key    = key;
     this.data   = data;
     this.left   = left   || null;
     this.right  = right  || null;
     this.parent = parent || null;
-    this.height = height || 1;
 
     if (left)  left.parent  = this;
     if (right) right.parent = this;

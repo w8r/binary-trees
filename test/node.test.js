@@ -1,5 +1,5 @@
 import test from 'blue-tape';
-import Node from '../src/node';
+import Node from '../src/avlnode';
 
 const getParent = () => {
   return new Node(1, 0,

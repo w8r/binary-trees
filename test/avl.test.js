@@ -116,7 +116,7 @@ const checkAVLTree = (tree) => {
   checkBalanceFactors(tree, tree.root);
 };
 
-test('AVL', (t) => {
+false && test('AVL', (t) => {
 
   t.test('export class', (t) => {
     t.ok(Tree);

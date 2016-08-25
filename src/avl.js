@@ -1,4 +1,4 @@
-import Node from './node';
+import Node from './avlnode';
 import BST  from './bst';
 
 
@@ -26,9 +26,17 @@ export default class Tree extends BST {
     super(comparator);
   }
 
-
+  /**
+   * @static
+   * @type {Function}
+   */
   static height = height
 
+
+  /**
+   * @static
+   * @type {Function}
+   */
   static balanceFactor = balanceFactor
 
 
@@ -55,7 +63,7 @@ export default class Tree extends BST {
   insert (key, data = null) {
     let inserted;
     if (this.root) {
-      inserted = this._insert(key, data, this.root);
+      inserted = this.insertNode(key, data, this.root);
     } else {
       inserted = this.root = new Node(key, data);
     }
@@ -70,13 +78,13 @@ export default class Tree extends BST {
    * @param  {Node} subtree
    * @return {Node|null}
    */
-  _insert (key, data, subtree) {
+  insertNode (key, data, subtree) {
     var cmp = this.comparator(key, subtree.key);
     if (cmp < 0) {
       if (subtree.left) {
-        return this._insert(key, data, subtree.left);
+        return this.insertNode(key, data, subtree.left);
       } else {
-        let child = new Node(key, data, null, null, subtree);
+        const child = new Node(key, data, null, null, subtree);
         subtree.left = child;
         subtree.height = Math.max(height(subtree.left), height(subtree.right)) + 1;
         this.balance(subtree);
@@ -84,9 +92,9 @@ export default class Tree extends BST {
       }
     } else {
       if (subtree.right) {
-        return this._insert(key, data, subtree.right);
+        return this.insertNode(key, data, subtree.right);
       } else {
-        let child = new Node(key, data, null, null, subtree);
+        const child = new Node(key, data, null, null, subtree);
         subtree.right = child;
         subtree.height = Math.max(height(subtree.left), height(subtree.right)) + 1;
         this.balance(subtree);

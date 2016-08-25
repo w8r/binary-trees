@@ -8,7 +8,7 @@ export default class BST {
    * @class BST
    * @param {Function=} comparator
    */
-  constructor(comparator = defaultCompare) {
+  constructor (comparator = defaultCompare) {
     this.root = null;
     this.comparator = comparator;
     this.length = 0;
@@ -22,12 +22,16 @@ export default class BST {
    */
   insert (key, data) {
     if (this.root === null) {
-      this.root = new Node(key, data);
+      this.root = this.createNode(key, data);
       this.length++;
       return this.root;
     } else {
       return this.insertNode(key, data, this.root);
     }
+  }
+
+  createNode (key, data) {
+    return new Node(key, data);
   }
 
 
@@ -41,14 +45,13 @@ export default class BST {
     while (true) {
       const cmp = this.comparator(key, parent.key);
       if (cmp === 0) {
-        node = parent;
         return null;
       }
       if (cmp > 0) {
         if (parent.right !== null) {
           parent = parent.right;
         } else {
-          node = new Node(key, data);
+          node = this.createNode(key, data);
           node.parent = parent;
           parent.right = node;
           this.length++;
@@ -58,7 +61,7 @@ export default class BST {
         if (parent.left !== null) {
           parent = parent.left;
         } else {
-          node = new Node(key, data);
+          node = this.createNode(key, data);
           node.parent = parent;
           parent.left = node;
           this.length++;
