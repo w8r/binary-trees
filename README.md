@@ -1,4 +1,4 @@
-# Red-black tree
+# Binary trees: Simple Binary, AVL, Red-Black
 
 ## npm scripts
 
