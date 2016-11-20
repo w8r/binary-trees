@@ -1,6 +1,6 @@
 {
   "name": "binary-trees",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Red-black tree and binary search tree",
   "license": "MIT",
   "main": "build/index.js",
