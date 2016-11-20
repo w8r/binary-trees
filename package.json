@@ -1,9 +1,9 @@
 {
   "name": "binary-trees",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Red-black tree and binary search tree",
   "license": "MIT",
-  "main": "dist/index.js",
+  "main": "build/index.js",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/w8r/rb-tree.git"
