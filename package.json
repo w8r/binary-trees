@@ -12,12 +12,16 @@
     "name": "Alexander Milevski <info@w8r.name>",
     "url": "https://github.com/w8r"
   },
+  "browserify": {},
   "scripts": {
     "watch": "node_modules/.bin/babel src -d lib --experimental -w",
     "clean": "rimraf lib build coverage",
     "lint": "eslint src",
     "ci": "babel-node test/*.test.js && zuul -- test/*.test.js",
-    "compile": "babel --stage 0 -d lib/ src/",
+    "avl": "babel -o lib/avl.js < ./node_modules/.bin/rollup src/avl.js -f umd -n avl",
+    "bst": "babel -o lib/bst.js < ./node_modules/.bin/rollup src/bst.js -f umd -n bst",
+    "rb": "babel -o lib/rb.js < ./node_modules/.bin/rollup src/rb.js -f umd -n rb",
+    "all": "babel -o lib/index.js < ./node_modules/.bin/rollup src/index.js -f umd -n bintrees",
     "build": "npm run clean && babel --optional runtime -d build src",
     "test": "babel-node node_modules/.bin/blue-tape test/*.test.js | tspec",
     "test:watch": "nodemon --exec 'npm run test'",
@@ -48,10 +52,12 @@
     "babel-eslint": "6.1.2",
     "babel-istanbul": "0.11.0",
     "babel-plugin-transform-es2015-modules-umd": "^6.18.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-es2015": "^6.14.0",
     "babel-preset-stage-0": "^6.5.0",
-    "babelify": "7.3.0",
+    "babelify": "^7.3.0",
     "blue-tape": "1.0.0",
+    "browserify": "^14.1.0",
     "coveralls": "2.11.12",
     "eslint": "3.4.0",
     "eslint-config-xo": "0.15.4",
@@ -63,6 +69,6 @@
     "zuul": "^3.11.0"
   },
   "dependencies": {
-    "babel-runtime": "^6.11.6"
+    "babel-runtime": "^6.23.0"
   }
 }

@@ -26,18 +26,13 @@ export default class Tree extends BST {
     super(comparator);
   }
 
-  /**
-   * @static
-   * @type {Function}
-   */
-  static height = height
-
+  //height
 
   /**
    * @static
    * @type {Function}
    */
-  static balanceFactor = balanceFactor
+  //balanceFactor
 
 
   /**
@@ -245,60 +240,4 @@ export default class Tree extends BST {
     return node;
   }
 
-
-  __removeNode (node, parent) {
-    if (node.isLeaf()) { // remove and balance up
-      if (parent) {
-        if (node.isLeft()) {
-          parent.left = null;
-        } else if (node.isRight()) {
-          parent.right = null;
-        }
-        this.balance(parent);
-      } else { // at root, smart huh
-        this.root = null;
-      }
-    } else if (node.left && node.right) { // two ancestors
-
-      let replacement = node.left;
-
-      // Special case: the in-order predecessor
-      // is right below the node to delete
-      if (!replacement.right) {
-        node.key  = replacement.key;
-        node.data = replacement.data;
-        node.left = replacement.left;
-        if (replacement.left) {
-          replacement.left.parent = node;
-        }
-      } else {
-
-        // After this loop, replacement is the right-most leaf in the left subtree
-        // and deletePath the path from the root (inclusive) to replacement (exclusive)
-        replacement = this._max(replacement);
-        node.key    = replacement.key;
-        node.data   = replacement.data;
-
-        replacement.parent.right = replacement.left;
-        if (replacement.left) replacement.left.parent = replacement.parent;
-      }
-      this.balance(parent);
-    } else { // 1 ancestor
-      let replacement = node.left || node.right;
-
-      if (!parent) {
-        this.root = replacement;
-        replacement.parent = null;
-      } else {
-        if (node.isLeft()) {
-          parent.left = replacement;
-        } else {
-          parent.right = replacement;
-        }
-        replacement.parent = parent;
-        this.balance(parent);
-      }
-    }
-    this.length--;
-  }
 }

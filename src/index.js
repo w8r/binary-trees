@@ -1,7 +1,7 @@
-export AVL  from './avl';
-export BST  from './bst';
-export RB   from './rb';
+export { default as AVL }  from './avl';
+export { default as BST }  from './bst';
+export { default as RB }   from './rb';
 
-export Node    from './node';
-export AVLNode from './avlnode';
-export RBNode  from './rbnode';
+export { default as Node }    from './node';
+export { default as AVLNode } from './avlnode';
+export { default as RBNode }  from './rbnode';
